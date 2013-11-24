@@ -3,7 +3,8 @@
 
 typedef float SAMPLE;
 #define SAMPLERATE 44800
-#define DELAYLINE_SECONDS 5
+#define DELAYLINE_SECONDS 3
+#define DELAYLINE_SAMPLES (SAMPLERATE * DELAYLINE_SECONDS * 2)
 #define ENVELOPE_SIZE 1024
 #define MAX_NUM_GRAINS 100
 
@@ -39,7 +40,7 @@ typedef struct Envelope{
 	float rampDownTable[ENVELOPE_SIZE];
 } Envelope;
 
-float delayLine[DELAYLINE_SECONDS * SAMPLERATE];
+float delayLine[DELAYLINE_SAMPLES];
 Grain grains[MAX_NUM_GRAINS];
 Scheduler scheduler;
 Envelope envelope;
@@ -49,7 +50,7 @@ void initEnvelope();
 float getAmplitude(float percentageComplete, EnvelopeType envType);
 
 //Grain
-void initGrain(Grain* grain, int direction, float speed, int msRemaining, int offsetInMs, EnvelopeType envelopeType);
+void initGrain(Grain* grain, int direction, float speed, int msRemaining, int offsetInMs, int currentReadPosition , EnvelopeType envelopeType);
 float synthesize(Grain* grain);
 
 //Scheduler

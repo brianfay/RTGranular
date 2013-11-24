@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int readIndex;
+int writeIndex;
 int samplesPassed;
 
 int audioCallback( const void *inputBuffer, void *outputBuffer,
@@ -26,20 +26,20 @@ int audioCallback( const void *inputBuffer, void *outputBuffer,
 		{
 			int j;
 			//one grain scheduled per second
-			if(samplesPassed % (SAMPLERATE) == 1){
+			if(samplesPassed % (int)((float)SAMPLERATE/40.0) == 0){
 				for(j = 0; j < MAX_NUM_GRAINS; j++){
-					//fprintf(stdout, "grains being initialized!\n");
 					if(!grains[j].samplesRemaining){
 						int direction;
-						float speed = 2;
-						int durationInMs = 400;
-						int offsetInMs = 200;
+						float speed = 1;
+						int durationInMs = 500;
+						int offsetInMs = 120;
 						if((double)rand()/RAND_MAX > 0.5){
 							direction = -1;
 						} else{
 							direction = 1;
 						}
-						initGrain(&(grains[j]), direction, speed, durationInMs, offsetInMs, COSINE);
+						fprintf(stdout, "grains being initialized at index %d!\n", j);
+						initGrain(&(grains[j]), direction, speed, durationInMs, offsetInMs, writeIndex, COSINE);
 						break;
 					}
 				}
@@ -47,15 +47,17 @@ int audioCallback( const void *inputBuffer, void *outputBuffer,
 			//copied twice for the two channels
 			int k;
 			for(k=0; k<2; k++){
-				readIndex %= (DELAYLINE_SECONDS * SAMPLERATE);
+				writeIndex %= (DELAYLINE_SAMPLES);
+				//delayLine[writeIndex] = *in++;
 				*out = *in++;
-				delayLine[readIndex++] = *out;
+				delayLine[writeIndex] = *out;
 				for(j = 0; j<MAX_NUM_GRAINS; j++){
 					*out += synthesize(&grains[j]);
 				}
 				*out++;
+				writeIndex++;
+				samplesPassed++;
 			}
-			samplesPassed++;
 	}
 	return paContinue;		
 }
@@ -95,7 +97,7 @@ int run(){
 	fprintf(stderr,"numInputChannels: %d \n", numInputChannels);
 	fprintf(stderr,"numOutputChannels: %d \n", numOutputChannels);
 	
-	readIndex = 0;
+	writeIndex = 0;
 	samplesPassed = 0;
 	PaStream* stream;
 	err = Pa_OpenStream(

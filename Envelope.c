@@ -14,16 +14,16 @@ float getAmplitude(float percentageComplete, EnvelopeType envelopeType){
 	float amp;
 	switch(envelopeType){
 		case COSINE:
-			amp = envelope.cosineTable[(int)(percentageComplete * 0.01 * ENVELOPE_SIZE)];
+			amp = envelope.cosineTable[(int)(percentageComplete * ENVELOPE_SIZE)];
 			break;
 		case RAMP_UP:
-			amp = envelope.rampUpTable[(int)(percentageComplete * 0.01 * ENVELOPE_SIZE)];
+			amp = envelope.rampUpTable[(int)(percentageComplete * ENVELOPE_SIZE)];
 			break;
 		case RAMP_DOWN:
-			amp = envelope.rampDownTable[(int)(percentageComplete * 0.01 * ENVELOPE_SIZE)];
+			amp = envelope.rampDownTable[(int)(percentageComplete * ENVELOPE_SIZE)];
 			break;
 		default:
-			amp = envelope.cosineTable[(int)(percentageComplete * 0.01 * ENVELOPE_SIZE)];
+			amp = envelope.cosineTable[(int)(percentageComplete * ENVELOPE_SIZE)];
 	}
 	return amp;
 }

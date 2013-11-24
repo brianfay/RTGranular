@@ -8,7 +8,7 @@ int main(){
 		//init all grains to dead so that they must be scheduled before doing anything
 		(grains[i]).samplesRemaining = 0;
 	}
-	for(i = 0; i < (DELAYLINE_SECONDS * SAMPLERATE); i++){
+	for(i = 0; i < (DELAYLINE_SAMPLES); i++){
 		delayLine[i] = 0.0;
 	}
 	scheduler.schedulingMode = ASYNCHRONOUS;
