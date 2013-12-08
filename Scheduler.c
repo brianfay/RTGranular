@@ -2,6 +2,7 @@
 #include <portaudio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int writeIndex;
 int samplesPassed;
@@ -26,20 +27,29 @@ int audioCallback( const void *inputBuffer, void *outputBuffer,
 		{
 			int j;
 			//one grain scheduled per second
-			if(samplesPassed % (int)((float)SAMPLERATE/40.0) == 0){
+			if(samplesPassed % (int)((float)SAMPLERATE/20.0) == 0){
 				for(j = 0; j < MAX_NUM_GRAINS; j++){
 					if(!grains[j].samplesRemaining){
 						int direction;
-						float speed = 1;
-						int durationInMs = 500;
-						int offsetInMs = 120;
+						float speed;
+						float randomChance = (double)rand()/RAND_MAX;
+						if(randomChance > 0.6){
+							speed = 1;	
+						} else if (randomChance > 0.3){
+							speed = 0.5;
+						} else{
+							speed = 2;
+						}
+						
+						int durationInMs = 25 + (int)(((double)rand()/RAND_MAX)*1000);
+						int offsetInMs = (int)(((double)rand()/RAND_MAX)*1000);
 						if((double)rand()/RAND_MAX > 0.5){
 							direction = -1;
 						} else{
 							direction = 1;
 						}
-						fprintf(stdout, "grains being initialized at index %d!\n", j);
-						initGrain(&(grains[j]), direction, speed, durationInMs, offsetInMs, writeIndex, COSINE);
+						//fprintf(stdout, "grains being initialized at index %d!\n", j);
+						initGrain(&(grains[j]), direction, speed, durationInMs, offsetInMs, writeIndex, HANNING);
 						break;
 					}
 				}

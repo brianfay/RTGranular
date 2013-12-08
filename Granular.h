@@ -3,21 +3,22 @@
 
 typedef float SAMPLE;
 #define SAMPLERATE 44800
-#define DELAYLINE_SECONDS 3
-#define DELAYLINE_SAMPLES (SAMPLERATE * DELAYLINE_SECONDS * 2)
+#define DELAYLINE_SECONDS 1
+#define DELAYLINE_SAMPLES ((int) (SAMPLERATE * DELAYLINE_SECONDS * 2))
 #define ENVELOPE_SIZE 1024
 #define MAX_NUM_GRAINS 100
+#define TWO_PI 6.28318530718
 
 
 typedef enum EnvelopeType{
-	COSINE = 0,
+	HANNING = 0,
 	RAMP_UP = 1,
 	RAMP_DOWN =  2
 } EnvelopeType;
 
 typedef struct Grain{
 	int offset;
-	int readIndex;
+	float readIndex;
 	int direction;
 	float speed;
 	int samplesRemaining;

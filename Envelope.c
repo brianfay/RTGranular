@@ -1,10 +1,11 @@
 #include "Granular.h"
+#include <math.h>
 
 void initEnvelope(){
 	int i;
 	for(i=0; i<ENVELOPE_SIZE; i++){
 		//just using ramp ups for now
-		envelope.cosineTable[i] = (float)i / (float)ENVELOPE_SIZE;
+		envelope.cosineTable[i] = 0.5 * (1 - cos(((TWO_PI*i) / ((float)ENVELOPE_SIZE - 1))));
 		envelope.rampUpTable[i] = (float)i / (float)ENVELOPE_SIZE;
 		envelope.rampDownTable[i] = (float)i / (float)ENVELOPE_SIZE;
 	}
@@ -13,7 +14,7 @@ void initEnvelope(){
 float getAmplitude(float percentageComplete, EnvelopeType envelopeType){
 	float amp;
 	switch(envelopeType){
-		case COSINE:
+		case HANNING:
 			amp = envelope.cosineTable[(int)(percentageComplete * ENVELOPE_SIZE)];
 			break;
 		case RAMP_UP:
